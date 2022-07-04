@@ -49,7 +49,7 @@ opposite_winning = {
 }
 
 def get_guess_from_history(player_name):
-    depth = 7
+    depth = 15
 
     if player_name not in all_human_guesses:
         return random.choice(['r', 'p', 's'])
@@ -110,6 +110,12 @@ guess_to_str = {
 }
 
 def get_response_string_from_guess(player_name, human_guess):
+    if human_guess == 'reset':
+        if player_name in all_human_guesses:
+            del all_human_guesses[player_name]
+            del human_wins[player_name]
+        return f'reset {player_name} history'
+        
     if human_guess not in ['r', 'p', 's']:
         return ''
     
@@ -119,7 +125,8 @@ def get_response_string_from_guess(player_name, human_guess):
         human_wins[player_name] = 0    
     human_wins[player_name] += ((-result) + 1) / 2
     update_history(player_name, human_guess)
-    return f'I threw {guess_to_str[computer_guess]}. ' + result_to_string[result] + f', your winrate is {100 * (human_wins[player_name] / len(all_human_guesses[player_name])):,.2f}%'
+    num_games = len(all_human_guesses[player_name])
+    return f'I threw {guess_to_str[computer_guess]}. ' + result_to_string[result] + f', your winrate is {100 * (human_wins[player_name] / num_games):,.2f}% out of {num_games} games'
 
 if __name__ == '__main__':
     result_to_string_colored = {
